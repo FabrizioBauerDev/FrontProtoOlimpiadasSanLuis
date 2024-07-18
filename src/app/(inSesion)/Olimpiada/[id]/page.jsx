@@ -34,7 +34,7 @@ const Etapas = () => {
           <Grid item xs={12} sm={6} md={4} lg={3} key={etapa.id}>
             <Card>
               <CardActionArea>
-                <CustomLink href={`/Olimpiada/Etapa/${etapa.id}`}>
+                <CustomLink href={`/Olimpiada/${json.olimpiada.id}/${etapa.id}`}>
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
                       {reemplazarGuionesBajos(etapa.region)}
