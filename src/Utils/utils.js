@@ -15,4 +15,12 @@ function formatearFecha(fecha) {
     return fechaFormateada;
 }
 
-export { reemplazarGuionesBajos, formatearFecha };
+function formatNombrePrueba(input) {
+    // Elimina el primer carácter si es un '_'
+    if (input.startsWith('_')) {
+        input = input.slice(1);
+    }
+    // Reemplaza los '_' restantes por espacios
+    return input.replace(/_/g, ' ');
+}
+export { reemplazarGuionesBajos, formatearFecha, formatNombrePrueba};

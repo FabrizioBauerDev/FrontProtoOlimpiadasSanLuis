@@ -1,6 +1,7 @@
 'use client';
 import { Roboto } from 'next/font/google';
 import { createTheme } from '@mui/material/styles';
+import { esES } from '@mui/x-data-grid/locales';
 
 const roboto = Roboto({
   weight: ['300', '400', '500', '700'],
@@ -8,7 +9,8 @@ const roboto = Roboto({
   display: 'swap',
 });
 
-const theme = createTheme({
+const theme = createTheme(
+  {
   palette: {
     mode: 'dark',
     primary: {
@@ -38,6 +40,7 @@ const theme = createTheme({
       },
     },
   },
-});
+},
+esES,);
 
 export default theme;
