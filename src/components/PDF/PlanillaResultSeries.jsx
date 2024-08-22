@@ -25,11 +25,10 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   image: {
-    width: 50,
-    height: 50,
+    height: 60,
   },
   title: {
     textAlign: "center",
@@ -106,9 +105,9 @@ const PlanillaResultSeries = ({ rows, serie }) => {
       <Page size="A4" orientation="landscape" style={styles.page}>
         {/* Header con 3 imágenes */}
         <View style={styles.header}>
-          <Image style={styles.image} src="/Images/logoFAS.jpg" />
-          <Image style={styles.image} src="/Images/logoFAS.jpg" />
-          <Image style={styles.image} src="/Images/logoOlimpiadas.jpeg" />
+          <Image style={styles.image} src="/Images/1__FAS-sin-fondo.png" />
+          <Image style={styles.image} src="/Images/2__OLIMPIADAS-ATLETISMO-sin-fondo.png" />
+          <Image style={styles.image} src="/Images/3__GOB.SAN-LUIS sin-fondo.png" />
         </View>
         {/* Título y Nombre de la Prueba */}
         <View fixed>
@@ -187,61 +186,63 @@ const PlanillaResultSeries = ({ rows, serie }) => {
           </View>
           {/* Filas dinámicas */}
           {rows.map((row, index) => (
-            <View style={styles.tableRow} key={index}>
-              <View style={{ ...styles.tableCol, width: columnWidths.ayn }}>
-                <Text style={styles.tableCell}>{row.ayn}</Text>
-              </View>
-              <View
-                style={{
-                  ...styles.tableCol,
-                  width: columnWidths.nacimiento,
-                  alignItems: "center",
-                }}
-              >
-                <Text style={styles.tableCell}>
-                  {format(new Date(row.fechaDeNacimiento), "dd/MM/yyyy")}
-                </Text>
-              </View>
-              <View
-                style={{ ...styles.tableCol, width: columnWidths.institucion }}
-              >
-                <Text style={styles.tableCell}>{row.institucion}</Text>
-              </View>
-              {(serie.prueba.tipo === "PistaConAndarivel" ||
-                serie.prueba.tipo === "PistaSinAndarivel" ||
-                serie.prueba.tipo === "SaltosHorizontales") && (
+            <View wrap={false} key={index}>
+              <View style={styles.tableRow}>
+                <View style={{ ...styles.tableCol, width: columnWidths.ayn }}>
+                  <Text style={styles.tableCell}>{row.ayn}</Text>
+                </View>
                 <View
                   style={{
                     ...styles.tableCol,
-                    width: columnWidths.and,
+                    width: columnWidths.nacimiento,
                     alignItems: "center",
                   }}
                 >
-                  <Text style={styles.tableCell}>
-                    {serie.prueba.tipo === "SaltosHorizontales"
-                      ? row.viento
-                      : row.and}
+                  <Text style={{...styles.tableCell, textAlign: "center"}}>
+                    {format(new Date(row.fechaDeNacimiento), "yyyy")}
                   </Text>
                 </View>
-              )}
-              <View
-                style={{
-                  ...styles.tableCol,
-                  width: columnWidths.marca,
-                  alignItems: "center",
-                }}
-              >
-                <Text style={styles.tableCell}>{row.marca}</Text>
-              </View>
-              <View
-                style={{
-                  ...styles.tableCol,
-                  borderRightWidth: 0,
-                  width: columnWidths.puesto,
-                  alignItems: "center",
-                }}
-              >
-                <Text style={styles.tableCell}>{row.puesto}</Text>
+                <View
+                  style={{ ...styles.tableCol, width: columnWidths.institucion }}
+                >
+                  <Text style={styles.tableCell}>{row.institucion}</Text>
+                </View>
+                {(serie.prueba.tipo === "PistaConAndarivel" ||
+                  serie.prueba.tipo === "PistaSinAndarivel" ||
+                  serie.prueba.tipo === "SaltosHorizontales") && (
+                  <View
+                    style={{
+                      ...styles.tableCol,
+                      width: columnWidths.and,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text style={styles.tableCell}>
+                      {serie.prueba.tipo === "SaltosHorizontales"
+                        ? row.viento
+                        : row.and}
+                    </Text>
+                  </View>
+                )}
+                <View
+                  style={{
+                    ...styles.tableCol,
+                    width: columnWidths.marca,
+                    alignItems: "center",
+                  }}
+                >
+                  <Text style={styles.tableCell}>{row.marca}</Text>
+                </View>
+                <View
+                  style={{
+                    ...styles.tableCol,
+                    borderRightWidth: 0,
+                    width: columnWidths.puesto,
+                    alignItems: "center",
+                  }}
+                >
+                  <Text style={styles.tableCell}>{row.puesto}</Text>
+                </View>
               </View>
             </View>
           ))}

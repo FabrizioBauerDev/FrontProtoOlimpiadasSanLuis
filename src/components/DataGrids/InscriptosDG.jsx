@@ -9,6 +9,7 @@ import {
   GridToolbarQuickFilter,
 } from "@mui/x-data-grid";
 import { Box } from "@mui/material";
+import { addDays} from "date-fns";
 
 function CustomToolbar() {
   return (
@@ -50,7 +51,7 @@ export default function App({ inscriptos }) {
     nombre: inscripto.nombre,
     apellido: inscripto.apellido,
     dni: inscripto.dni,
-    fechaDeNacimiento: new Date(inscripto.fecha),
+    fechaDeNacimiento: addDays(new Date(inscripto.fecha),1),
     institucion: inscripto.institucion.nombre,
   }));
 

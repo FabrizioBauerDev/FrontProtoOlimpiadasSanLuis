@@ -9,7 +9,6 @@ import {
 } from "@mui/x-data-grid";
 import {
   Box,
-  Typography,
   TextField,
   IconButton,
   FormControl,
@@ -19,7 +18,8 @@ import {
 import PrintIcon from "@mui/icons-material/Print";
 import EditIcon from "@mui/icons-material/Edit";
 import CheckIcon from "@mui/icons-material/Check";
-import React, { useState, useEffect, useRef } from "react";
+import AddIcon from "@mui/icons-material/Add";
+import React, { useState, useEffect } from "react";
 import {
   fetchParticipacionesBySerieId,
   fetchParticipacionesByPruebaId,
@@ -27,11 +27,13 @@ import {
   multipleUpdateParticipa,
 } from "@/Api/api";
 import SortearAndariveles from "@/components/Dialogs/SortearAndariveles";
-import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
+import CrearFinal from "@/components/Dialogs/CrearFinal";
 import PlanillaResultSeries from "@/components/PDF/PlanillaResultSeries";
 import PlanillaVaciaLanzamientos from "@/components/PDF/PlanillaVaciaLanzamientos";
+import SelectAthlete from "@/components/Dialogs/SelectAthlete";
 import { pdf } from "@react-pdf/renderer";
-import ReactDOMServer from "react-dom/server";
+import { comparadorDinamico } from "@/Utils/utils";
+import { addDays} from "date-fns";
 
 // Componente personalizado de la barra de herramientas
 function CustomToolbar() {
@@ -56,16 +58,17 @@ function CustomToolbar() {
 }
 
 // Componente principal
-export default function App({ serie, serieId, prueba }) {
+export default function App({ serie, serieId, prueba, emptyFinals }) {
   const [rows, setRows] = useState([]);
   const [columns, setColumns] = useState([]);
   const [data, setData] = useState([]);
   const [viento, setViento] = useState(false); // Estado inicial en modo no editable
   const [value, setValue] = useState(""); // Estado para el valor del TextField
   const [originalValue, setOriginalValue] = useState(""); // Estado para comparar cambios
-  const [open, setOpen] = useState(false);
+  const [openSorteo, setOpenSorteo] = useState(false);
+  const [openFinales, setOpenFinales] = useState(false);
   const [editable, setEditable] = useState(false);
-  const [info, setInfo] = useState({});
+  const [addAthlete, setAddAthlete] = useState(false);
 
   const regexCarreras = /^(\d{1,2}:\d{2}\.\d{2}|\d{1,2}\.\d{2,3})$/;
   const regexSaltosLanzamientos = /^\d{1,2}\.\d{2}m$/;
@@ -119,6 +122,8 @@ export default function App({ serie, serieId, prueba }) {
             headerName: "Marca",
             flex: 0.2,
             editable: editable,
+            sortComparator: (marcaA, marcaB) =>
+              comparadorDinamico(marcaA, marcaB, prueba.tipo),
           },
           {
             field: "puesto",
@@ -129,10 +134,11 @@ export default function App({ serie, serieId, prueba }) {
         ]);
         setData(data);
         const rows = data
-          .map((participacion) => ({
-            id: participacion.atleta.id,
-            ayn: `${participacion.atleta.nombre} ${participacion.atleta.apellido}`,
-            fechaDeNacimiento: new Date(participacion.atleta.fecha),
+          .map((participacion, index) => ({
+            id: index,
+            idAtleta: participacion.atleta.id,
+            ayn: `${participacion.atleta.apellido} ${participacion.atleta.nombre}`,
+            fechaDeNacimiento: addDays(new Date(participacion.atleta.fecha), 1),
             institucion: participacion.atleta.institucion.nombre,
             and: participacion.andarivel === 0 ? null : participacion.andarivel,
             marca: participacion.marca,
@@ -169,10 +175,11 @@ export default function App({ serie, serieId, prueba }) {
 
   useEffect(() => {
     const rows = data
-      .map((participacion) => ({
-        id: participacion.atleta.id,
-        ayn: `${participacion.atleta.nombre} ${participacion.atleta.apellido}`,
-        fechaDeNacimiento: new Date(participacion.atleta.fecha),
+      .map((participacion, index) => ({
+        id: index,
+        idAtleta: participacion.atleta.id,
+        ayn: `${participacion.atleta.apellido} ${participacion.atleta.nombre}`,
+        fechaDeNacimiento: addDays(new Date(participacion.atleta.fecha), 1),
         institucion: participacion.atleta.institucion.nombre,
         and: participacion.andarivel === 0 ? null : participacion.andarivel,
         marca: participacion.marca,
@@ -229,11 +236,19 @@ export default function App({ serie, serieId, prueba }) {
   };
 
   const handleClickOpen = () => {
-    setOpen(true);
+    setOpenSorteo(true);
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setOpenSorteo(false);
+  };
+
+  const handleClickOpenFinales = () => {
+    setOpenFinales(true);
+  };
+
+  const handleCloseFinales = () => {
+    setOpenFinales(false);
   };
 
   const processRowUpdate = (newRow, oldRow) => {
@@ -282,7 +297,7 @@ export default function App({ serie, serieId, prueba }) {
         // Tomar data y agregarle los valores de las celdas
         const participaciones = data.map((participacion) => {
           const updatedRow = rows.find(
-            (row) => row.id === participacion.atleta.id
+            (row) => row.idAtleta === participacion.atleta.id
           );
           if (updatedRow) {
             return {
@@ -315,9 +330,35 @@ export default function App({ serie, serieId, prueba }) {
     window.open(url);
   };
 
+  const handleAddAthleteOpen = () => {
+    setAddAthlete(true);
+  };
+
+  const handleAddAthleteClose = () => {
+    setAddAthlete(false);
+  };
+
   return (
     <Box>
       <Box>
+        {serieId === 0 && emptyFinals && (
+          <Grid container spacing={2} my={1} alignItems="center">
+            <Grid item xs={2}>
+              <Button
+                onClick={handleClickOpenFinales}
+                color="success"
+                variant="contained"
+              >
+                Generar Finales
+              </Button>
+              <CrearFinal
+                open={openFinales}
+                handleClose={handleCloseFinales}
+                prueba={prueba}
+              />
+            </Grid>
+          </Grid>
+        )}
         {serieId > 0 && (
           <Grid container spacing={2} my={1} alignItems="center">
             {prueba.tipo === "PistaConAndarivel" && (
@@ -355,7 +396,7 @@ export default function App({ serie, serieId, prueba }) {
                     Sortear andariveles
                   </Button>
                   <SortearAndariveles
-                    open={open}
+                    open={openSorteo}
                     handleClose={handleClose}
                     cantAtletas={rows.length}
                     participaciones={data}
@@ -385,6 +426,26 @@ export default function App({ serie, serieId, prueba }) {
                 >
                   Planilla vacía
                 </Button>
+              </Grid>
+            )}
+            {serie.instancia === "Final" && (
+              <Grid item xs={2}>
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={handleAddAthleteOpen}
+                  endIcon={<AddIcon />}
+                >
+                  Añadir atletas
+                </Button>
+                <SelectAthlete
+                  open={addAthlete}
+                  handleClose={handleAddAthleteClose}
+                  prueba={prueba}
+                  serieId={serieId}
+                  participaciones={data}
+                  setParticipaciones={setData}
+                />
               </Grid>
             )}
             <Grid item xs={2}>

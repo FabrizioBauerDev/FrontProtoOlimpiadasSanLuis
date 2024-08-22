@@ -16,10 +16,20 @@ export default function App({ prueba, series, setSeries, cantInscriptos }) {
   const [select1, setSelect1] = useState(1);
   const [select2, setSelect2] = useState(null);
   const [serie, setSerie] = useState(0);
+  const [emptyFinals, setEmptyFinals] = useState(true);
 
   useEffect(() => {
-    setSerie(0);
+    setSerie(0);    
   }, [prueba]);
+
+  useEffect(() => {
+    setEmptyFinals(true);
+    series.map((s) => {
+      if (s.instancia === "Final") {
+        setEmptyFinals(false);
+      }
+    });
+  }, [series]);
 
   // Handle select1 Change
   const handleSelect1Change = (event) => {
@@ -47,6 +57,7 @@ export default function App({ prueba, series, setSeries, cantInscriptos }) {
       case 1:
         res = await fetchgenerateSeries("generateSeriesByAnd", prueba.id, 0);
         setSeries(res.data);
+        setSerie(0);
         break;
         case 2:
         case 3:
@@ -65,6 +76,7 @@ export default function App({ prueba, series, setSeries, cantInscriptos }) {
             select2
           );
           setSeries(res.data);
+          setSerie(0);
         }
         break;
       case 4:
@@ -82,6 +94,25 @@ export default function App({ prueba, series, setSeries, cantInscriptos }) {
             select2
           );
           setSeries(res.data);
+          setSerie(0);
+        }
+        break;
+        case 5:
+        // Cantidad de finales
+        if (0 > select2 || select2 > cantInscriptos) {
+          alert(
+            `La cantidad no puede ser negativa, ni mayor a la cantidad de inscriptos (${cantInscriptos})`
+          );
+          return;
+        }
+        else{
+          res = await fetchgenerateSeries(
+            "generateSeriesByCantFinales",
+            prueba.id,
+            select2
+          );
+          setSeries(res.data);
+          setSerie(0);
         }
         break;
     }
@@ -105,6 +136,7 @@ export default function App({ prueba, series, setSeries, cantInscriptos }) {
                 <MenuItem value={2}>Cantidad de andariveles usuario</MenuItem>
                 <MenuItem value={3}>Número de Atletas</MenuItem>
                 <MenuItem value={4}>Número de Series</MenuItem>
+                <MenuItem value={5}>Número de Finales</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -163,6 +195,7 @@ export default function App({ prueba, series, setSeries, cantInscriptos }) {
             serie={series.find((s) => s.id === serie) || null}
             prueba={prueba}
             serieId={serie}
+            emptyFinals={emptyFinals}
           />
         </Box>
       )}

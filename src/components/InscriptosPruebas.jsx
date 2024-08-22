@@ -24,6 +24,7 @@ import {
   fetchInscriptosByPruebaId,
   fetchSeriesByPruebaId,
 } from "@/Api/api";
+import InscribirAtleta from "@/components/Dialogs/InscribirAtleta";
 
 function InscriptosPruebas({ idEtapa }) {
   const [categoria, setCategoria] = useState("");
@@ -33,6 +34,15 @@ function InscriptosPruebas({ idEtapa }) {
   const [sexos, setSexos] = useState([]);
   const [nombresOptions, setNombresOptions] = useState([]);
   const [selectedPrueba, setSelectedPrueba] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleDialogOpen = () => {
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+  };
 
   // LISTA DE PRUEBAS
   const [json, setJson] = useState(null);
@@ -208,6 +218,24 @@ function InscriptosPruebas({ idEtapa }) {
                     {selectedPrueba.categoria} - {selectedPrueba.sexo} -{" "}
                     {selectedPrueba.nombre}
                   </Typography>
+                  {/* ACA AGREGAR UN GRID Y UN BOTON QUE OCUPE XS=3 PARA LA CARGA DE UN ATLETA */}
+                  <Grid container spacing={2}>
+                    <Grid item xs={3} mb={2}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        onClick={handleDialogOpen}
+                      >
+                        Inscribir Atleta
+                      </Button>
+                      <InscribirAtleta
+                        open={openDialog}
+                        onClose={handleDialogClose}
+                        inscriptos={inscriptos}
+                      />
+                    </Grid>
+                  </Grid>
                   <InscriptosDG inscriptos={inscriptos} />
                 </AccordionDetails>
               </Accordion>

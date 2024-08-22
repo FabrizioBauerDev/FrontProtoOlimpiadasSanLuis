@@ -25,11 +25,10 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   image: {
-    width: 50,
-    height: 50,
+    height: 60,
   },
   title: {
     textAlign: "center",
@@ -106,9 +105,9 @@ const PlanillaVaciaLanzamientos = ({ rows, serie }) => {
       <Page size="A4" orientation="landscape" style={styles.page}>
         {/* Header con 3 imágenes */}
         <View style={styles.header}>
-          <Image style={styles.image} src="/Images/logoFAS.jpg" />
-          <Image style={styles.image} src="/Images/logoFAS.jpg" />
-          <Image style={styles.image} src="/Images/logoOlimpiadas.jpeg" />
+          <Image style={styles.image} src="/Images/1__FAS-sin-fondo.png" />
+          <Image style={styles.image} src="/Images/2__OLIMPIADAS-ATLETISMO-sin-fondo.png" />
+          <Image style={styles.image} src="/Images/3__GOB.SAN-LUIS sin-fondo.png" />
         </View>
         <View fixed>
           {/* Título y Nombre de la Prueba */}
@@ -278,107 +277,109 @@ const PlanillaVaciaLanzamientos = ({ rows, serie }) => {
 
           {/* Filas dinámicas */}
           {rows.map((row, index) => (
-            <View key={index} style={styles.tableRow}>
-              <View
-                style={{
-                  ...styles.tableCol,
-                  width: columnWidths.ayn,
-                }}
-              >
-                <Text style={{height: alto}}>{row.ayn}</Text>
-              </View>
-              <View
-                style={{
-                  ...styles.tableCol,
-                  width: columnWidths.nacimiento,
-                }}
-              >
-                <Text style={{height: alto}}>
-                  {format(new Date(row.fechaDeNacimiento), "dd/MM/yyyy")}
-                </Text>
-              </View>
-              <View
-                style={{
-                  ...styles.tableCol,
-                  width: columnWidths.institucion,
-                }}
-              >
-                <Text style={{height: alto}}>{row.institucion}</Text>
-              </View>
-              {/* Columnas de Eliminatoria */}
-              <View
-                style={{
-                  ...styles.tableCol,
-                  width: columnWidths.marca,
-                }}
-              >
-                <Text style={{height: alto}}></Text>
-              </View>
-              <View
-                style={{
-                  ...styles.tableCol,
-                  width: columnWidths.marca,
-                }}
-              >
-                <Text style={{height: alto}}></Text>
-              </View>
-              <View
-                style={{
-                  ...styles.tableCol,
-                  width: columnWidths.marca,
-                }}
-              >
-                <Text style={{height: alto}}></Text>
-              </View>
-              <View
-                style={{
-                  ...styles.tableCol,
-                  width: columnWidths.puesto,
-                }}
-              >
-                <Text style={{height: alto}}></Text>
-              </View>
-              {/* Columnas de Final */}
-              <View
-                style={{
-                  ...styles.tableCol,
-                  width: columnWidths.marca,
-                }}
-              >
-                <Text style={{height: alto}}></Text>
-              </View>
-              <View
-                style={{
-                  ...styles.tableCol,
-                  width: columnWidths.marca,
-                }}
-              >
-                <Text style={{height: alto}}></Text>
-              </View>
-              <View
-                style={{
-                  ...styles.tableCol,
-                  width: columnWidths.marca,
-                }}
-              >
-                <Text style={{height: alto}}></Text>
-              </View>
-              <View
-                style={{
-                  ...styles.tableCol,
-                  width: columnWidths.marca,
-                }}
-              >
-                <Text style={{height: alto}}></Text>
-              </View>
-              <View
-                style={{
-                  ...styles.tableCol,
-                  borderRightWidth: 0,
-                  width: columnWidths.puesto,
-                }}
-              >
-                <Text style={{height: alto}}></Text>
+            <View wrap={false} key={index}>
+              <View style={styles.tableRow}>
+                <View
+                  style={{
+                    ...styles.tableCol,
+                    width: columnWidths.ayn,
+                  }}
+                >
+                  <Text style={{height: alto}}>{row.ayn}</Text>
+                </View>
+                <View
+                  style={{
+                    ...styles.tableCol,
+                    width: columnWidths.nacimiento,
+                  }}
+                >
+                  <Text style={{height: alto, textAlign:"center"}}>
+                    {format(new Date(row.fechaDeNacimiento), "yyyy")}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    ...styles.tableCol,
+                    width: columnWidths.institucion,
+                  }}
+                >
+                  <Text style={{height: alto}}>{row.institucion}</Text>
+                </View>
+                {/* Columnas de Eliminatoria */}
+                <View
+                  style={{
+                    ...styles.tableCol,
+                    width: columnWidths.marca,
+                  }}
+                >
+                  <Text style={{height: alto}}></Text>
+                </View>
+                <View
+                  style={{
+                    ...styles.tableCol,
+                    width: columnWidths.marca,
+                  }}
+                >
+                  <Text style={{height: alto}}></Text>
+                </View>
+                <View
+                  style={{
+                    ...styles.tableCol,
+                    width: columnWidths.marca,
+                  }}
+                >
+                  <Text style={{height: alto}}></Text>
+                </View>
+                <View
+                  style={{
+                    ...styles.tableCol,
+                    width: columnWidths.puesto,
+                  }}
+                >
+                  <Text style={{height: alto}}></Text>
+                </View>
+                {/* Columnas de Final */}
+                <View
+                  style={{
+                    ...styles.tableCol,
+                    width: columnWidths.marca,
+                  }}
+                >
+                  <Text style={{height: alto}}></Text>
+                </View>
+                <View
+                  style={{
+                    ...styles.tableCol,
+                    width: columnWidths.marca,
+                  }}
+                >
+                  <Text style={{height: alto}}></Text>
+                </View>
+                <View
+                  style={{
+                    ...styles.tableCol,
+                    width: columnWidths.marca,
+                  }}
+                >
+                  <Text style={{height: alto}}></Text>
+                </View>
+                <View
+                  style={{
+                    ...styles.tableCol,
+                    width: columnWidths.marca,
+                  }}
+                >
+                  <Text style={{height: alto}}></Text>
+                </View>
+                <View
+                  style={{
+                    ...styles.tableCol,
+                    borderRightWidth: 0,
+                    width: columnWidths.puesto,
+                  }}
+                >
+                  <Text style={{height: alto}}></Text>
+                </View>
               </View>
             </View>
           ))}
