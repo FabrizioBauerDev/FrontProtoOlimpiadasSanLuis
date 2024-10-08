@@ -14,6 +14,7 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from "@mui/material";
+import PrintIcon from "@mui/icons-material/Print";
 import SearchIcon from "@mui/icons-material/Search";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import InscriptosDG from "@/components/DataGrids/InscriptosDG";
@@ -23,8 +24,11 @@ import {
   fetchPruebasByEtapa,
   fetchInscriptosByPruebaId,
   fetchSeriesByPruebaId,
+  fetchPruebaById
 } from "@/Api/api";
 import InscribirAtleta from "@/components/Dialogs/InscribirAtleta";
+import ListadoInscriptos from "@/components/PDF/ListadoInscriptos";
+import { pdf } from "@react-pdf/renderer";
 
 function InscriptosPruebas({ idEtapa }) {
   const [categoria, setCategoria] = useState("");
@@ -34,6 +38,7 @@ function InscriptosPruebas({ idEtapa }) {
   const [sexos, setSexos] = useState([]);
   const [nombresOptions, setNombresOptions] = useState([]);
   const [selectedPrueba, setSelectedPrueba] = useState(null);
+  const [prueba, setPrueba] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
 
   const handleDialogOpen = () => {
@@ -115,6 +120,9 @@ function InscriptosPruebas({ idEtapa }) {
           prueba.nombre === selectedName.label
       );
       setSelectedPrueba(selectedPrueba);
+      // Obtener prueba completa con etapa y olimpiada
+      const pruebaRes = await fetchPruebaById(selectedPrueba.id);
+      setPrueba(pruebaRes.data);
       // Obtener los inscriptos de esa prueba
       const inscriptosRes = await fetchInscriptosByPruebaId(selectedPrueba.id);
       setInscriptos(inscriptosRes);
@@ -126,6 +134,14 @@ function InscriptosPruebas({ idEtapa }) {
 
   const handleAutocompleteChange = (event, newValue) => {
     setSelectedName(newValue);
+  };
+
+  const handlePrint = async (Component, props) => {
+    const doc = <Component {...props} />;
+    const asPdf = pdf(doc);
+    const blob = await asPdf.toBlob();
+    const url = URL.createObjectURL(blob);
+    window.open(url);
   };
 
   return (
@@ -218,9 +234,9 @@ function InscriptosPruebas({ idEtapa }) {
                     {selectedPrueba.categoria} - {selectedPrueba.sexo} -{" "}
                     {selectedPrueba.nombre}
                   </Typography>
-                  {/* ACA AGREGAR UN GRID Y UN BOTON QUE OCUPE XS=3 PARA LA CARGA DE UN ATLETA */}
+                  {/* ACA AGREGAR UN GRID Y UN BOTON QUE OCUPE XS=3 PARA LA CARGA DE UN ATLETA  */}
                   <Grid container spacing={2}>
-                    <Grid item xs={3} mb={2}>
+                    <Grid item xs={2} mb={2}>
                       <Button
                         variant="contained"
                         color="primary"
@@ -233,10 +249,28 @@ function InscriptosPruebas({ idEtapa }) {
                         open={openDialog}
                         onClose={handleDialogClose}
                         inscriptos={inscriptos}
+                        prueba={prueba}
                       />
                     </Grid>
+                    <Grid item xs={2}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() =>
+                          handlePrint(ListadoInscriptos, { inscriptos, prueba })
+                        }
+                        endIcon={<PrintIcon />}
+                      >
+                        PDF Listado
+                      </Button>
+                    </Grid>
                   </Grid>
-                  <InscriptosDG inscriptos={inscriptos} />
+
+                  <InscriptosDG
+                    inscriptos={inscriptos}
+                    setInscriptos={setInscriptos}
+                    pruebaId={selectedPrueba.id}
+                  />
                 </AccordionDetails>
               </Accordion>
             </Box>

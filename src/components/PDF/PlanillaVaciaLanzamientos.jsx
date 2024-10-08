@@ -7,7 +7,7 @@ import {
   Image,
   StyleSheet,
 } from "@react-pdf/renderer";
-import { format } from "date-fns";
+import { format, addDays } from "date-fns";
 import {
   reemplazarGuionesBajos,
   formatNombrePrueba,
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderWidth: 1,
     borderLeftWidth: 0, // Sin borde izquierdo
-    borderTopWidth: 0,  // Sin borde superior
+    borderTopWidth: 0, // Sin borde superior
     padding: 5,
   },
 
@@ -106,8 +106,14 @@ const PlanillaVaciaLanzamientos = ({ rows, serie }) => {
         {/* Header con 3 imágenes */}
         <View style={styles.header}>
           <Image style={styles.image} src="/Images/1__FAS-sin-fondo.png" />
-          <Image style={styles.image} src="/Images/2__OLIMPIADAS-ATLETISMO-sin-fondo.png" />
-          <Image style={styles.image} src="/Images/3__GOB.SAN-LUIS sin-fondo.png" />
+          <Image
+            style={styles.image}
+            src="/Images/2__OLIMPIADAS-ATLETISMO-sin-fondo.png"
+          />
+          <Image
+            style={styles.image}
+            src="/Images/3__GOB.SAN-LUIS sin-fondo.png"
+          />
         </View>
         <View fixed>
           {/* Título y Nombre de la Prueba */}
@@ -285,7 +291,7 @@ const PlanillaVaciaLanzamientos = ({ rows, serie }) => {
                     width: columnWidths.ayn,
                   }}
                 >
-                  <Text style={{height: alto}}>{row.ayn}</Text>
+                  <Text style={{ height: alto }}>{row.ayn}</Text>
                 </View>
                 <View
                   style={{
@@ -293,8 +299,8 @@ const PlanillaVaciaLanzamientos = ({ rows, serie }) => {
                     width: columnWidths.nacimiento,
                   }}
                 >
-                  <Text style={{height: alto, textAlign:"center"}}>
-                    {format(new Date(row.fechaDeNacimiento), "yyyy")}
+                  <Text style={{ height: alto, textAlign: "center" }}>
+                    {format(addDays(new Date(row.fechaDeNacimiento), 1), "yyyy")}
                   </Text>
                 </View>
                 <View
@@ -303,7 +309,7 @@ const PlanillaVaciaLanzamientos = ({ rows, serie }) => {
                     width: columnWidths.institucion,
                   }}
                 >
-                  <Text style={{height: alto}}>{row.institucion}</Text>
+                  <Text style={{ height: alto }}>{row.institucion}</Text>
                 </View>
                 {/* Columnas de Eliminatoria */}
                 <View
@@ -312,7 +318,7 @@ const PlanillaVaciaLanzamientos = ({ rows, serie }) => {
                     width: columnWidths.marca,
                   }}
                 >
-                  <Text style={{height: alto}}></Text>
+                  <Text style={{ height: alto }}></Text>
                 </View>
                 <View
                   style={{
@@ -320,7 +326,7 @@ const PlanillaVaciaLanzamientos = ({ rows, serie }) => {
                     width: columnWidths.marca,
                   }}
                 >
-                  <Text style={{height: alto}}></Text>
+                  <Text style={{ height: alto }}></Text>
                 </View>
                 <View
                   style={{
@@ -328,7 +334,7 @@ const PlanillaVaciaLanzamientos = ({ rows, serie }) => {
                     width: columnWidths.marca,
                   }}
                 >
-                  <Text style={{height: alto}}></Text>
+                  <Text style={{ height: alto }}></Text>
                 </View>
                 <View
                   style={{
@@ -336,7 +342,7 @@ const PlanillaVaciaLanzamientos = ({ rows, serie }) => {
                     width: columnWidths.puesto,
                   }}
                 >
-                  <Text style={{height: alto}}></Text>
+                  <Text style={{ height: alto }}></Text>
                 </View>
                 {/* Columnas de Final */}
                 <View
@@ -345,7 +351,7 @@ const PlanillaVaciaLanzamientos = ({ rows, serie }) => {
                     width: columnWidths.marca,
                   }}
                 >
-                  <Text style={{height: alto}}></Text>
+                  <Text style={{ height: alto }}></Text>
                 </View>
                 <View
                   style={{
@@ -353,7 +359,7 @@ const PlanillaVaciaLanzamientos = ({ rows, serie }) => {
                     width: columnWidths.marca,
                   }}
                 >
-                  <Text style={{height: alto}}></Text>
+                  <Text style={{ height: alto }}></Text>
                 </View>
                 <View
                   style={{
@@ -361,7 +367,7 @@ const PlanillaVaciaLanzamientos = ({ rows, serie }) => {
                     width: columnWidths.marca,
                   }}
                 >
-                  <Text style={{height: alto}}></Text>
+                  <Text style={{ height: alto }}></Text>
                 </View>
                 <View
                   style={{
@@ -369,7 +375,7 @@ const PlanillaVaciaLanzamientos = ({ rows, serie }) => {
                     width: columnWidths.marca,
                   }}
                 >
-                  <Text style={{height: alto}}></Text>
+                  <Text style={{ height: alto }}></Text>
                 </View>
                 <View
                   style={{
@@ -378,7 +384,7 @@ const PlanillaVaciaLanzamientos = ({ rows, serie }) => {
                     width: columnWidths.puesto,
                   }}
                 >
-                  <Text style={{height: alto}}></Text>
+                  <Text style={{ height: alto }}></Text>
                 </View>
               </View>
             </View>

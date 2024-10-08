@@ -51,13 +51,14 @@ export default function Page() {
 
       const worksheet = workbook.getWorksheet(1);
       const jsonData = [];
-
+      const cantAtletas = [];  
       let rowIndex = 7;
 
       for (let i = 0; i < 6; i++) {
         // Iteramos 6 veces
         const combinedRow = worksheet.getRow(rowIndex);
         let datos = {};
+        const mapDNI = new Map();
         datos.categoria= combinedRow.values.at(1).split(" ")[0],
         datos.sexo= capitalizeWords(combinedRow.values.at(1).split(" ")[1]),
         datos.atletas= [],
@@ -70,9 +71,9 @@ export default function Page() {
         // for (let j = 0; j < 16; j++) {
           const apellido = capitalizeWords(row.values.at(3));
           const nombre = capitalizeWords(row.values.at(4));
+          console.log(apellido + " " + nombre);
           // Verificar si apellido o nombre están vacíos o son undefined
           if (apellido && nombre) {
-            console.log(apellido+ " "+ nombre);
             datos.atletas.push({
               prueba: row.values.at(2).toLowerCase().replaceAll(" ",""),
               apellido: apellido,
@@ -80,6 +81,7 @@ export default function Page() {
               dni: row.values.at(6),
               f_nacimiento: format(addDays(new Date(row.values.at(7)), 1), "dd/MM/yyyy"),
             });
+            mapDNI.set(row.values.at(6), nombre + " " + apellido);
           }
           rowIndex++;
           row = worksheet.getRow(rowIndex);
@@ -87,9 +89,22 @@ export default function Page() {
         // Omitir la siguiente fila
         rowIndex++;
         jsonData.push(datos);
+        cantAtletas.push(mapDNI);
       }
       setExcelData(jsonData);
-      console.log(jsonData);
+      // PARA COMPROBAR QUE LA LECTURA ES CORRECTA
+      console.log(jsonData[0].atletas);
+      console.log(cantAtletas[0]);
+      console.log(jsonData[1].atletas);
+      console.log(cantAtletas[1]);
+      console.log(jsonData[2].atletas);
+      console.log(cantAtletas[2]);
+      console.log(jsonData[3].atletas);
+      console.log(cantAtletas[3]);
+      console.log(jsonData[4].atletas);
+      console.log(cantAtletas[4]);
+      console.log(jsonData[5].atletas);
+      console.log(cantAtletas[5]);
     };
     reader.readAsArrayBuffer(file);
     setSelectedFile(file); // Guardamos el archivo seleccionado

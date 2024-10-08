@@ -30,7 +30,8 @@ import SortearAndariveles from "@/components/Dialogs/SortearAndariveles";
 import CrearFinal from "@/components/Dialogs/CrearFinal";
 import PlanillaResultSeries from "@/components/PDF/PlanillaResultSeries";
 import PlanillaVaciaLanzamientos from "@/components/PDF/PlanillaVaciaLanzamientos";
-import SelectAthlete from "@/components/Dialogs/SelectAthlete";
+import SelectAthleteFinal from "@/components/Dialogs/SelectAthleteFinal";
+import SelectAthleteSerie from "@/components/Dialogs/SelectAthleteSerie";
 import { pdf } from "@react-pdf/renderer";
 import { comparadorDinamico } from "@/Utils/utils";
 import { addDays} from "date-fns";
@@ -68,11 +69,8 @@ export default function App({ serie, serieId, prueba, emptyFinals }) {
   const [openSorteo, setOpenSorteo] = useState(false);
   const [openFinales, setOpenFinales] = useState(false);
   const [editable, setEditable] = useState(false);
-  const [addAthlete, setAddAthlete] = useState(false);
-
-  const regexCarreras = /^(\d{1,2}:\d{2}\.\d{2}|\d{1,2}\.\d{2,3})$/;
-  const regexSaltosLanzamientos = /^\d{1,2}\.\d{2}m$/;
-  const regexPuesto = /^([1-9]|[1-9][0-9])$/;
+  const [addAthleteFinal, setAddAthleteFinal] = useState(false);
+  const [addAthleteSerie, setAddAthleteSerie] = useState(false);
 
   useEffect(() => {
     const fetchRows = async () => {
@@ -260,6 +258,12 @@ export default function App({ serie, serieId, prueba, emptyFinals }) {
   };
 
   const handleEditPlanilla = async () => {
+    const regexCarreras = /^(\d{1,2}:\d{2}\.\d{2}|\d{1,2}\.\d{2,3})$/;
+    const regexSaltosLanzamientos = /^\d{1,2}\.\d{2}m$/;
+    const regexPuesto = /^([1-9]|[1-9][0-9]|)$/; // Añadido el string vacío
+    
+    const validMarcaValues = ["", "NM", "DNS", "DNF", "DQ", "FP"];
+    
     if (!editable) {
       setEditable(true);
       alert("Editando planilla");
@@ -267,7 +271,6 @@ export default function App({ serie, serieId, prueba, emptyFinals }) {
       // Controlar los valores de las celdas
       let isValid = true;
       let isPuestoValid = true;
-
       rows.forEach((row) => {
         // Validar el tipo de prueba
         if (
@@ -275,7 +278,7 @@ export default function App({ serie, serieId, prueba, emptyFinals }) {
           prueba.tipo === "PistaSinAndarivel"
         ) {
           // Carreras d.dd o dd.dd o d:dd.dd o dd:dd.dd
-          if (row.marca != null && !regexCarreras.test(row.marca)) {
+          if (row.marca != null && (!regexCarreras.test(row.marca) && !validMarcaValues.includes(row.marca))) {
             isValid = false;
             alert("Marca incorrecta: " + row.marca + ". Atleta: " + row.ayn);
           }
@@ -285,7 +288,7 @@ export default function App({ serie, serieId, prueba, emptyFinals }) {
           prueba.tipo === "Lanzamientos"
         ) {
           // Saltos horizontales y lanzamientos d.ddm o dd.ddm
-          if (row.marca != null && !regexSaltosLanzamientos.test(row.marca)) {
+          if (row.marca != null && (!regexSaltosLanzamientos.test(row.marca) && !validMarcaValues.includes(row.marca))) {
             isValid = false;
           }
         }
@@ -293,6 +296,7 @@ export default function App({ serie, serieId, prueba, emptyFinals }) {
           isPuestoValid = false;
         }
       });
+      
       if (isValid && isPuestoValid) {
         // Tomar data y agregarle los valores de las celdas
         const participaciones = data.map((participacion) => {
@@ -322,6 +326,7 @@ export default function App({ serie, serieId, prueba, emptyFinals }) {
     }
   };
 
+
   const handlePrint = async (Component, props) => {
     const doc = <Component {...props} />;
     const asPdf = pdf(doc);
@@ -330,12 +335,20 @@ export default function App({ serie, serieId, prueba, emptyFinals }) {
     window.open(url);
   };
 
-  const handleAddAthleteOpen = () => {
-    setAddAthlete(true);
+  const handleAddAthleteOpenFinal = () => {
+    setAddAthleteFinal(true);
   };
 
-  const handleAddAthleteClose = () => {
-    setAddAthlete(false);
+  const handleAddAthleteCloseFinal = () => {
+    setAddAthleteFinal(false);
+  };
+
+  const handleAddAthleteOpenSerie = () => {
+    setAddAthleteSerie(true);
+  };
+
+  const handleAddAthleteCloseSerie = () => {
+    setAddAthleteSerie(false);
   };
 
   return (
@@ -428,19 +441,37 @@ export default function App({ serie, serieId, prueba, emptyFinals }) {
                 </Button>
               </Grid>
             )}
+            {serie.instancia === "Serie" && (
+              <Grid item xs={2}>
+                <Button
+                  variant="contained"
+                  onClick={handleAddAthleteOpenSerie}
+                  color="success"
+                  endIcon={<AddIcon />}
+                >
+                  Añadir atletas
+                </Button>
+                <SelectAthleteSerie
+                  open={addAthleteSerie}
+                  handleClose={handleAddAthleteCloseSerie}
+                  prueba={prueba}
+                  serieId={serieId}
+                />
+              </Grid>
+            )}
             {serie.instancia === "Final" && (
               <Grid item xs={2}>
                 <Button
                   variant="contained"
                   color="success"
-                  onClick={handleAddAthleteOpen}
+                  onClick={handleAddAthleteOpenFinal}
                   endIcon={<AddIcon />}
                 >
                   Añadir atletas
                 </Button>
-                <SelectAthlete
-                  open={addAthlete}
-                  handleClose={handleAddAthleteClose}
+                <SelectAthleteFinal
+                  open={addAthleteFinal}
+                  handleClose={handleAddAthleteCloseFinal}
                   prueba={prueba}
                   serieId={serieId}
                   participaciones={data}

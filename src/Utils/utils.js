@@ -24,9 +24,11 @@ function formatNombrePrueba(input) {
   return input.replace(/_/g, " ");
 }
 
+const validMarcaValues = ["", "NM", "DNS", "DNF", "DQ", "FP"];
+
 // Función para convertir los tiempos a segundos
 function convertirATiempoEnSegundos(tiempo) {
-  if (!tiempo) return Infinity; // Devuelve un valor muy alto si el tiempo es null o undefined
+  if (!tiempo || validMarcaValues.includes(tiempo)) return Infinity; // Devuelve un valor muy alto si el tiempo es null o undefined
   if (tiempo.includes(":")) {
     const [minutos, segundos] = tiempo.split(":");
     return parseInt(minutos) * 60 + parseFloat(segundos);
@@ -45,7 +47,7 @@ const comparadorDeTiempos = (tiempoA, tiempoB) => {
 
 // Función para convertir la distancia a un número sin el 'm'
 function convertirADistanciaEnMetros(distancia) {
-  if (!distancia) return -Infinity; // Devuelve un valor muy bajo si la distancia es null o undefined
+  if (!distancia || validMarcaValues.includes(distancia)) return -Infinity; // Devuelve un valor muy bajo si la distancia es null o undefined
   return parseFloat(distancia.replace("m", ""));
 }
 

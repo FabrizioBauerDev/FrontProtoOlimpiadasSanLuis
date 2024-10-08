@@ -34,6 +34,16 @@ export const fetchEtapaById = async (id) => {
   }
 };
 
+export const fetchReportByEtapaId = async (id) => {
+  try {
+    const response = await axiosInstance.get(`/etapa/${id}/resultados`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error;
+  }
+};
+
 // PRUEBAS
 export const fetchPruebasByEtapa = async (id) => {
   try {
@@ -47,6 +57,16 @@ export const fetchPruebasByEtapa = async (id) => {
   }
 };
 
+export const fetchPruebaById = async (id) => {
+  try {
+    const response = await axiosInstance.get(`/prueba/getById/${id}`);
+    return response;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error;
+  }
+}
+
 // INSCRIPTOS
 export const fetchInscriptosByPruebaId = async (id) => {
   try {
@@ -59,6 +79,32 @@ export const fetchInscriptosByPruebaId = async (id) => {
     throw error;
   }
 };
+
+export const deleteInscriptos = async (inscripcionesAEliminar) => {
+  try {
+    const response = await axiosInstance.post(
+      "/inscripciones/deleteInscripciones",
+      inscripcionesAEliminar
+    );
+    return response;
+  } catch (error) {
+    console.error("Error al eliminar las inscripciones:", error);
+    throw error;
+  }
+}
+
+export const insertInscripcion = async (inscripcion) => {
+  try {
+    const response = await axiosInstance.post(
+      "/inscripciones/insertInscripcion",
+      inscripcion
+    );
+    return response;
+  } catch (error) {
+    console.error("Error al eliminar las inscripciones:", error);
+    throw error;
+  }
+}
 
 // SERIES
 export const fetchSeriesByPruebaId = async (id) => {
@@ -102,6 +148,7 @@ export const multipleUpdateParticipa = async (serieId, participaciones) => {
 export const multipleCreateParticipa = async (serieId, participaciones) => {
   try {
     // Hacer el POST al servidor
+    console.log("Participaciones a crear:", participaciones);
     const response = await axiosInstance.post(
       `/participa/${serieId}`,
       participaciones
@@ -189,7 +236,7 @@ export const fetchAllInstituciones = async () => {
   }
 };
 
-// ATLETAS POR DNI
+// ATLETAS 
 export const fetchAtletasByDni = async (dni) => {
   try {
     const response = await axiosInstance.get(`/atleta/getAtletaByDni?dni=${dni}`);
@@ -198,3 +245,16 @@ export const fetchAtletasByDni = async (dni) => {
     console.error("Error al buscar atletas:", error);
   }
 };
+
+export const insertAtleta = async (atleta) => {
+  try {
+    const response = await axiosInstance.post(
+      "/atleta/insertAtleta",
+      atleta
+    );
+    return response;
+  } catch (error) {
+    console.error("Error al eliminar las inscripciones:", error);
+    throw error;
+  }
+}

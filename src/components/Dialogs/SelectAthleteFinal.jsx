@@ -51,7 +51,6 @@ export default function SortearAndariveles({
   prueba,
   serieId,
   participaciones,
-  setParticipaciones,
 }) {
   const [rows, setRows] = useState([]);
   const [columns, setColumns] = useState([]);
@@ -123,7 +122,7 @@ export default function SortearAndariveles({
           const rows = data.map((participacion,index) => ({
             id: index,
             idAtleta: participacion.atleta.id,
-            ayn: `${participacion.atleta.nombre} ${participacion.atleta.apellido}`,
+            ayn: `${participacion.atleta.apellido} ${participacion.atleta.nombre}`,
             fechaDeNacimiento: new Date(participacion.atleta.fecha),
             institucion: participacion.atleta.institucion.nombre,
             and: participacion.andarivel === 0 ? null : participacion.andarivel,
