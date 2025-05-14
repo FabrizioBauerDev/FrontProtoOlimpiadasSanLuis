@@ -19,8 +19,9 @@ import React, { Suspense, useEffect, useState } from "react";
 import { fetchEtapaById, uploadExcel } from "@/Api/api";
 import { capitalizeWords } from "@/Utils/utils";
 import ExcelJS from "exceljs";
+import Papa from 'papaparse';
 import DeleteIcon from "@mui/icons-material/Delete";
-import { format, addDays} from "date-fns";
+import { parse, format, addDays } from 'date-fns';
 
 export default function Page() {
   const params = useParams();
@@ -40,7 +41,7 @@ export default function Page() {
     fetchData();
   }, [idEtapa]);
 
-  const handleFileUpload = async (event) => {
+  const handleFileUpload_old = async (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
 
@@ -93,6 +94,7 @@ export default function Page() {
       }
       setExcelData(jsonData);
       // PARA COMPROBAR QUE LA LECTURA ES CORRECTA
+      console.log(jsonData);
       console.log(jsonData[0].atletas);
       console.log(cantAtletas[0]);
       console.log(jsonData[1].atletas);
@@ -109,6 +111,85 @@ export default function Page() {
     reader.readAsArrayBuffer(file);
     setSelectedFile(file); // Guardamos el archivo seleccionado
   };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+  
+    Papa.parse(file, {
+      complete: (results) => {
+        const data = results.data;
+        const jsonData = [];
+        const cantAtletas = [];
+        let datos = {};
+        let mapDNI = new Map();
+  
+        // Suponiendo que la fila 3 contiene el primer atleta
+        let rowIndex = 2; // índice base 0
+        let combinedRow = data[2];
+        datos.categoria = combinedRow[1]?.split(" ")[0] || "";
+        datos.sexo = capitalizeWords(combinedRow[1]?.split(" ")[1] || "");
+        datos.atletas = [];
+  
+        for (let i = 0; i < 96; i++) {
+          const row = data[rowIndex];
+          if (!row) break;
+
+          const prueba = row[2];
+          const apellido = capitalizeWords(row[3]);
+          const nombre = capitalizeWords(row[4]);
+          const dni = row[5];
+          const f_nacimiento = row[6];
+  
+          if (apellido && nombre) {
+            datos.atletas.push({
+              prueba: prueba?.toLowerCase().replaceAll(" ", ""),
+              apellido,
+              nombre,
+              dni,
+              f_nacimiento: format(addDays(parse(f_nacimiento, "dd/MM/yyyy", new Date()), 1), "dd/MM/yyyy"),
+            });
+            mapDNI.set(dni, nombre + " " + apellido);
+          }
+  
+          rowIndex++;
+  
+          if ([16, 32, 48, 64, 80, 96].includes(i + 1)) {
+            jsonData.push(datos);
+            cantAtletas.push(mapDNI);
+            datos = {};
+            mapDNI = new Map();
+            combinedRow = data[rowIndex];
+            if(combinedRow){
+              datos.categoria = combinedRow[1]?.split(" ")[0] || "";
+              datos.sexo = capitalizeWords(combinedRow[1]?.split(" ")[1] || "");
+              datos.atletas = [];
+            }
+          }
+        }
+  
+        setExcelData(jsonData);
+       // PARA COMPROBAR QUE LA LECTURA ES CORRECTA
+      console.log(jsonData);
+      console.log(jsonData[0].atletas);
+      console.log(cantAtletas[0]);
+      console.log(jsonData[1].atletas);
+      console.log(cantAtletas[1]);
+      console.log(jsonData[2].atletas);
+      console.log(cantAtletas[2]);
+      console.log(jsonData[3].atletas);
+      console.log(cantAtletas[3]);
+      console.log(jsonData[4].atletas);
+      console.log(cantAtletas[4]);
+      console.log(jsonData[5].atletas);
+      console.log(cantAtletas[5]);
+      },
+      header: false, // Asumimos que no hay encabezados
+      skipEmptyLines: true,
+    });
+  
+    setSelectedFile(file); // Guardamos el archivo seleccionado
+  };
+  
 
   const handleFileRemove = () => {
     setSelectedFile(null);
@@ -194,7 +275,7 @@ export default function Page() {
                           <input
                             type="file"
                             onChange={handleFileUpload}
-                            accept=".xlsx, .xls"
+                            accept=".csv"
                             style={{ display: "none" }}
                             id="upload-file-input"
                           />
